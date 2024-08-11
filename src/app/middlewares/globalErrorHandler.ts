@@ -6,9 +6,7 @@ import {
     handleBadValueError,
     handleCastErrorDB,
     handleDuplicateFieldsErrorDB,
-    handleDuplicateKeyErrorInTrsAndRb,
     handleValidationErrorDB,
-    handleValidationErrorTrsAndRb,
     handleZodError,
 } from '../errors/common/commonErrors';
 
@@ -58,17 +56,6 @@ const allErrors = (err: any) => {
     }
     if (config.NODE_ENV === 'production') {
         if (err?.code === 2) error = handleBadValueError();
-    }
-
-    // special cases when use trasaction and rollback
-    if (err.message.includes('11000')) {
-        // duplicate error
-        error = handleDuplicateKeyErrorInTrsAndRb(err);
-    }
-    if (err.message.includes('ValidationError')) {
-        // validation error error
-
-        error = handleValidationErrorTrsAndRb(err);
     }
 
     return error;
