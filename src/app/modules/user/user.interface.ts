@@ -3,6 +3,7 @@ import { Model } from 'mongoose';
 export type IRole = 'admin' | 'user';
 
 export type IUser = {
+    [x: string]: any;
     name: string;
     email: string;
     password: string;
@@ -10,6 +11,9 @@ export type IUser = {
     address: string;
     role: IRole;
     isDeleted: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+    __v?: string;
 };
 
 // Define the type for custom instance methods

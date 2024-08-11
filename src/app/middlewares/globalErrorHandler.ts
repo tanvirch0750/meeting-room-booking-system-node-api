@@ -56,7 +56,7 @@ const allErrors = (err: any) => {
     if (err?.name === 'ValidationError') {
         error = handleValidationErrorDB(error);
     }
-    if (config.env === 'production') {
+    if (config.NODE_ENV === 'production') {
         if (err?.code === 2) error = handleBadValueError();
     }
 
@@ -75,7 +75,7 @@ const allErrors = (err: any) => {
 };
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
-    if (config.env === 'development') {
+    if (config.NODE_ENV === 'development') {
         // eslint-disable-next-line no-console
         console.log('🚀 globalErrorHandler ~~ ', err);
     } else {
@@ -85,7 +85,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     err.statusCode = err.statusCode || 500;
     err.status = err.status || 'error';
 
-    if (config.env === 'development') {
+    if (config.NODE_ENV === 'development') {
         const error = allErrors(err);
 
         if (err instanceof AppError) {
@@ -93,7 +93,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
         } else if (err instanceof Error || err instanceof ZodError) {
             sendErrorToDev(error, res);
         }
-    } else if (config.env === 'production') {
+    } else if (config.NODE_ENV === 'production') {
         const error = allErrors(err);
 
         if (err instanceof AppError) {

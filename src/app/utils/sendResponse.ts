@@ -11,8 +11,9 @@ type TResponse<T> = {
 const sendResponse = <T>(res: Response, data: TResponse<T>) => {
     res.status(data?.statusCode).json({
         success: data.success,
-        token: data.token,
+        statusCode: data.statusCode,
         message: data.message,
+        token: data.token,
         data: data.data,
     });
 };

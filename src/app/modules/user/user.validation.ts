@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { capitalizeString } from '../../utils/utilityFunctions';
 
 // User schema
 const createUserValidationSchema = z.object({
@@ -10,10 +9,7 @@ const createUserValidationSchema = z.object({
                 invalid_type_error: 'Name must be a string',
             })
             .max(100, { message: 'Name can not be more than 100 characters' })
-            .transform((val) => val.trim())
-            .refine((val) => capitalizeString(val) === val, {
-                message: 'Name is not in capitalize format',
-            }),
+            .transform((val) => val.trim()),
         password: z
             .string({
                 required_error: 'Password is required',

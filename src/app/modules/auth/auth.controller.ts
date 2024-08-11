@@ -5,19 +5,38 @@ import sendResponse from '../../utils/sendResponse';
 import { AuthServices } from './auth.service';
 
 const signupUser = catchAsync(async (req, res) => {
+    console.log('sign up user');
     const result = await AuthServices.signupUser(req.body);
+
+    const {
+        password,
+        isDeleted,
+        createdAt,
+        updatedAt,
+        __v,
+        ...userWithoutPassword
+    } = result.toObject();
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
         message: 'User registered successfully',
-        data: result,
+        data: userWithoutPassword,
     });
 });
 
 const loginUser = catchAsync(async (req, res) => {
     const result = await AuthServices.loginUser(req.body);
     const { refreshToken, accessToken, user } = result;
+
+    const {
+        password,
+        isDeleted,
+        createdAt,
+        updatedAt,
+        __v,
+        ...userWithoutPassword
+    } = user.toObject();
 
     res.cookie('refreshToken', refreshToken, {
         secure: config.NODE_ENV === 'production',
@@ -29,12 +48,13 @@ const loginUser = catchAsync(async (req, res) => {
         success: true,
         message: 'User logged in succesfully!',
         token: accessToken,
-        data: user,
+        data: userWithoutPassword,
     });
 });
 
 const refreshToken = catchAsync(async (req, res) => {
     const { refreshToken } = req.cookies;
+
     const result = await AuthServices.refreshToken(refreshToken);
 
     sendResponse(res, {
