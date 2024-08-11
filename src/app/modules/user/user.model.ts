@@ -23,6 +23,7 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
         phone: {
             type: String,
             required: true,
+            unique: true,
         },
         address: {
             type: String,
@@ -31,6 +32,7 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
         role: {
             type: String,
             enum: userRoles,
+            default: 'user',
         },
 
         isDeleted: {
