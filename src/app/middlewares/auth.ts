@@ -11,7 +11,7 @@ import catchAsync from '../utils/catchAsync';
 const auth = (...requiredRoles: IRole[]) => {
     return catchAsync(
         async (req: Request, res: Response, next: NextFunction) => {
-            const token = req.headers.authorization;
+            const token = req.headers.authorization?.split(' ')[1];
 
             // checking if the token is missing
             if (!token) {
@@ -27,10 +27,10 @@ const auth = (...requiredRoles: IRole[]) => {
                 config.jwt_access_secret as string,
             ) as JwtPayload;
 
-            const { role, userId, iat } = decoded;
+            const { role, userEmail, iat } = decoded;
 
             // checking if the user is exist
-            const user = await User.isUserExistsByCustomId(userId);
+            const user = await User.isUserExistsByEmail(userEmail);
 
             if (!user) {
                 throw new AppError(
@@ -49,28 +49,7 @@ const auth = (...requiredRoles: IRole[]) => {
                 );
             }
 
-            // checking if the user is blocked
-            const userStatus = user?.status;
-
-            if (userStatus === 'blocked') {
-                throw new AppError(
-                    httpStatus.FORBIDDEN,
-                    'This user is blocked ! !',
-                );
-            }
-
-            if (
-                user.passwordChangedAt &&
-                User.isJWTIssuedBeforePasswordChanged(
-                    user.passwordChangedAt,
-                    iat as number,
-                )
-            ) {
-                throw new AppError(
-                    httpStatus.UNAUTHORIZED,
-                    'You are not authorized !',
-                );
-            }
+            // TODO: is user change password
 
             if (requiredRoles && !requiredRoles.includes(role)) {
                 throw new AppError(

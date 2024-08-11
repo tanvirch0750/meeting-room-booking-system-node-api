@@ -4,12 +4,14 @@ type TResponse<T> = {
     statusCode: number;
     success: boolean;
     message?: string;
+    token?: string;
     data: T;
 };
 
 const sendResponse = <T>(res: Response, data: TResponse<T>) => {
     res.status(data?.statusCode).json({
         success: data.success,
+        token: data.token,
         message: data.message,
         data: data.data,
     });
