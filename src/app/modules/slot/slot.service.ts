@@ -110,6 +110,8 @@ const getAvailableSlotsFromDB = async (query: Record<string, unknown>) => {
         delete query.roomId;
     }
 
+    // TODO: remove all the slots that is previous date
+
     // Start building the query
     let slotQuery = Slot.find({ isBooked: false, isDeleted: false });
 
@@ -117,9 +119,6 @@ const getAvailableSlotsFromDB = async (query: Record<string, unknown>) => {
     if (date) {
         slotQuery = slotQuery.where('date').equals(date);
     }
-
-    console.log('roomId', roomId);
-    console.log('date', date);
 
     // Filter by roomId if provided
     if (roomId) {
