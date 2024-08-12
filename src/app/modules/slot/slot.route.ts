@@ -16,5 +16,7 @@ router.post(
     slotController.createSlot,
 );
 
+router.get('/availability', slotController.getAvailableSlots);
+
 // Export the router as ProductRoutes
 export const slotRoutes = router;

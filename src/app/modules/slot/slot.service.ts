@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
+import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/appError';
 import { Room } from '../room/room.model';
+import { SlotSearchableFields } from './slot.constant';
 import { ISlot } from './slot.interface';
 import { Slot } from './slot.model';
 import { minutesToTime, timeToMinutes } from './slot.utils';
@@ -100,6 +102,42 @@ const createSlotIntoDB = async (payload: ISlot) => {
     }
 };
 
+const getAvailableSlotsFromDB = async (query: Record<string, unknown>) => {
+    const { date, roomId } = query;
+
+    if (roomId) {
+        query.room = query.roomId;
+        delete query.roomId;
+    }
+
+    // Start building the query
+    let slotQuery = Slot.find({ isBooked: false, isDeleted: false });
+
+    // Filter by date if provided
+    if (date) {
+        slotQuery = slotQuery.where('date').equals(date);
+    }
+
+    console.log('roomId', roomId);
+    console.log('date', date);
+
+    // Filter by roomId if provided
+    if (roomId) {
+        slotQuery = slotQuery.where('room').equals(roomId);
+    }
+
+    const roomQuery = new QueryBuilder(slotQuery.populate('room'), query)
+        .search(SlotSearchableFields)
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+
+    const result = await roomQuery.modelQuery;
+    return result;
+};
+
 export const slotServices = {
     createSlotIntoDB,
+    getAvailableSlotsFromDB,
 };
