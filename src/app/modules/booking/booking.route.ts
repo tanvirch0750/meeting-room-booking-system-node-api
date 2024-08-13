@@ -19,9 +19,6 @@ router.post(
 // Define the route for retrieving all bookings
 router.get('/', auth(USER_ROLE.admin), bookingController.getAllBookings);
 
-// // Define the route for retrieving all bookings by user
-// router.get('/', auth(USER_ROLE.user), bookingController.getBookingsByUser);
-
 // Define the route for deleting a booking by its ID
 router.delete('/:id', auth(USER_ROLE.admin), bookingController.deleteBooking);
 
