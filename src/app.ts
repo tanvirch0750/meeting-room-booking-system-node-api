@@ -13,7 +13,7 @@ app.use(cors({ origin: ['http://localhost:3000'] })); // frontend origin
 app.use(cookieParser());
 
 // application routes
-app.use('/api/v1', router);
+app.use('/api', router);
 
 // response to root route
 app.get('/', (req: Request, res: Response) => {

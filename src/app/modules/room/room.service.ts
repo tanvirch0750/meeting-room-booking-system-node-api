@@ -30,6 +30,12 @@ const getSingleRoomFromDB = async (id: string) => {
 };
 
 const updateRoomIntoDB = async (id: string, payload: Partial<IRoom>) => {
+    // Check if the booking exists
+    const roomExists = await Room.findById(id);
+    if (!roomExists) {
+        throw new AppError(404, `Room not found with ID: ${id}`);
+    }
+
     const result = await Room.findOneAndUpdate({ _id: id }, payload, {
         new: true,
     });
@@ -37,6 +43,12 @@ const updateRoomIntoDB = async (id: string, payload: Partial<IRoom>) => {
 };
 
 const deleteRoomFromDB = async (id: string) => {
+    // Check if the booking exists
+    const roomExists = await Room.findById(id);
+    if (!roomExists) {
+        throw new AppError(404, `Room not found with ID: ${id}`);
+    }
+
     const result = await Room.updateOne({ _id: id }, { isDeleted: true });
 
     return result;

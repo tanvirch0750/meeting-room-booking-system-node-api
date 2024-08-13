@@ -16,5 +16,22 @@ router.post(
     bookingController.createBooking,
 );
 
+// Define the route for retrieving all bookings
+router.get('/', auth(USER_ROLE.admin), bookingController.getAllBookings);
+
+// // Define the route for retrieving all bookings by user
+// router.get('/', auth(USER_ROLE.user), bookingController.getBookingsByUser);
+
+// Define the route for deleting a booking by its ID
+router.delete('/:id', auth(USER_ROLE.admin), bookingController.deleteBooking);
+
+// Define the route for updating a room by its ID
+router.put(
+    '/:id',
+    auth(USER_ROLE.admin),
+    validateRequest(bookingValidations.updateBookinglidationSchema),
+    bookingController.updateBooking,
+);
+
 // Export the router as ProductRoutes
 export const bookingRoutes = router;

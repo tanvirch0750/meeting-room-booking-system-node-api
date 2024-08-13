@@ -14,6 +14,76 @@ const createBooking = catchAsync(async (req, res) => {
     });
 });
 
+const getAllBookings = catchAsync(async (req, res) => {
+    const result = await bookingServices.getAllBookingsFromDB(req.query);
+
+    if (result.length <= 0) {
+        sendResponse(res, {
+            statusCode: 404,
+            success: false,
+            message: 'No Data Found',
+            data: [],
+        });
+    } else {
+        sendResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            message: 'Bookings are retrieved successfully',
+            data: result,
+        });
+    }
+});
+
+const getBookingsByUser = catchAsync(async (req, res) => {
+    const { userEmail } = req.user;
+
+    const result = await bookingServices.getBookingByUserFromDB(userEmail);
+
+    if (result.length <= 0) {
+        sendResponse(res, {
+            statusCode: 404,
+            success: false,
+            message: 'No Data Found',
+            data: [],
+        });
+    } else {
+        sendResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            message: 'Bookings are retrieved successfully',
+            data: result,
+        });
+    }
+});
+
+const updateBooking = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const result = await bookingServices.updateBookingIntoDB(id, req.body);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Room is updated succesfully',
+        data: result,
+    });
+});
+
+const deleteBooking = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const result = await bookingServices.deleteBookingFromDB(id);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Room is deleted succesfully',
+        data: result,
+    });
+});
+
 export const bookingController = {
     createBooking,
+    getAllBookings,
+    getBookingsByUser,
+    updateBooking,
+    deleteBooking,
 };

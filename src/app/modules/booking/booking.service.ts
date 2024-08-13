@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
+import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/appError';
 import { Room } from '../room/room.model';
 import { Slot } from '../slot/slot.model';
 import { User } from '../user/user.model';
+import { BookingSearchableFields } from './booking.constant';
 import { IBooking } from './booking.interface';
 import { Booking } from './booking.model';
 
@@ -32,7 +34,6 @@ export const createBooking = async (payload: IBooking) => {
         const existingSlots = await Slot.find({
             _id: { $in: slots },
             room,
-            date,
             isBooked: false,
         }).session(session);
 
@@ -84,6 +85,76 @@ export const createBooking = async (payload: IBooking) => {
     }
 };
 
+const getAllBookingsFromDB = async (query: Record<string, unknown>) => {
+    const bookingQuery = new QueryBuilder(
+        Booking.find()
+            .populate('slots', 'room date startTime endTime isBooked')
+            .populate('user', 'name email phone address role')
+            .populate(
+                'room',
+                'name roomNo floorNo capacity pricePerSlot amenities isDeleted',
+            ),
+        query,
+    )
+        .search(BookingSearchableFields)
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+
+    const result = await bookingQuery.modelQuery;
+    return result;
+};
+
+const getBookingByUserFromDB = async (email: string) => {
+    // Find user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        throw new AppError(404, 'User not found');
+    }
+
+    // Find bookings associated with the user
+    const bookings = await Booking.find({ user: user._id })
+        .populate('slots', 'room date startTime endTime isBooked')
+        .populate('user', 'name email phone address role')
+        .populate(
+            'room',
+            'name roomNo floorNo capacity pricePerSlot amenities isDeleted',
+        );
+
+    return bookings;
+};
+
+const updateBookingIntoDB = async (id: string, payload: Partial<IBooking>) => {
+    // Check if the booking exists
+    const bookingExists = await Booking.findById(id);
+    if (!bookingExists) {
+        throw new AppError(404, `Booking not found with ID: ${id}`);
+    }
+
+    const result = await Booking.findOneAndUpdate({ _id: id }, payload, {
+        new: true,
+    });
+    return result;
+};
+
+const deleteBookingFromDB = async (id: string) => {
+    // Check if the booking exists
+    const bookingExists = await Booking.findById(id);
+    if (!bookingExists) {
+        throw new AppError(404, `Booking not found with ID: ${id}`);
+    }
+
+    const result = await Booking.updateOne({ _id: id }, { isDeleted: true });
+
+    return result;
+};
+
 export const bookingServices = {
     createBooking,
+    getAllBookingsFromDB,
+    getBookingByUserFromDB,
+    updateBookingIntoDB,
+    deleteBookingFromDB,
 };
