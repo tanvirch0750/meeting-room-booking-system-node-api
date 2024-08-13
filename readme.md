@@ -40,6 +40,21 @@ This web application streamlines the process of reserving co-working spaces for 
 #### User Routes
 
 -   User Sign Up (POST): https://room-booking-node.vercel.app/api/auth/signup
+
+    -   Request body:
+
+    ```
+    {
+        "name": "Abu Sayed",
+        "email": "banlar-bir@gmail.com",
+        "password": "1234",
+        "phone": "1234567890",
+        "role": "admin", //role can be user or admin
+        "address": "Rangpur"
+    }
+
+    ```
+
 -   User login (POST): https://room-booking-node.vercel.app/api/auth/login
 
 #### Room Routes
