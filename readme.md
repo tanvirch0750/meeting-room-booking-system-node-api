@@ -37,6 +37,15 @@ This web application streamlines the process of reserving co-working spaces for 
 
 -   Root route: https://room-booking-node.vercel.app
 
+-   Request Headers (for admin and user accessible route):
+
+```
+    Authorization:
+    Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmF
+    tZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+```
+
 #### User Routes
 
 -   User Sign Up (POST): https://room-booking-node.vercel.app/api/auth/signup
@@ -46,7 +55,7 @@ This web application streamlines the process of reserving co-working spaces for 
     ```
     {
         "name": "Abu Sayed",
-        "email": "banlar-bir@gmail.com",
+        "email": "banglar-bir@gmail.com",
         "password": "1234",
         "phone": "1234567890",
         "role": "admin", //role can be user or admin
@@ -57,26 +66,97 @@ This web application streamlines the process of reserving co-working spaces for 
 
 -   User login (POST): https://room-booking-node.vercel.app/api/auth/login
 
+    -   Request body:
+
+    ```
+    {
+        "email": "banglar-bir@gmail.com",
+        "password": "1234"
+    }
+
+    ```
+
 #### Room Routes
 
 -   Create Room - (admin) (POST): https://room-booking-node.vercel.app/api/rooms
+
+    -   Request body:
+
+    ```
+    {
+        "name": "Meeting Room",
+        "roomNo": 304,
+        "floorNo": 2,
+        "capacity": 30,
+        "pricePerSlot": 300,
+        "amenities": ["Projector", "Whiteboard"]
+    }
+
+    ```
+
 -   Get all rooms (GET): https://room-booking-node.vercel.app/api/rooms
 -   Get single room (GET): https://room-booking-node.vercel.app/api/rooms/66bb697bd4466a0652710d25
 -   Update room (admin) (PUT): https://room-booking-node.vercel.app/api/rooms/66bb697bd4466a0652710d25
+
+-   Request body:
+
+    ```
+    {
+         "pricePerSlot": 200 //we can update any field dynamically, (e.g., name, roomNo, floorNo, capacity, pricePerSlot, amenities)..
+    }
+
+    ```
+
 -   Delete room (admin) (DELETE): https://room-booking-node.vercel.app/api/rooms/66bb697bd4466a0652710d25
 
-#### Orders Routes
+#### Slots Routes
 
 -   Create slot (admin) (POST): https://room-booking-node.vercel.app/api/slots
+
+    -   Request body:
+
+    ```
+    {
+        "room": "66bb697bd4466a0652710d25",
+        "date": "2024-09-15",
+        "startTime": "10:00",
+        "endTime": "15:00"
+    }
+
+    ```
+
 -   Get available slots (GET): https://room-booking-node.vercel.app/api/slots/availability
 -   Get available slots by date and room id (GET): https://room-booking-node.vercel.app/api/slots/availability?date=2024-08-12&roomId=66b91d60da0cda3c66265732
 
 #### Room Routes
 
 -   Create Booking - (user) (POST): https://room-booking-node.vercel.app/api/bookings
+
+    -   Request body:
+
+    ```
+    {
+        "date": "2024-07-15",
+        "slots": ["66bb69cbd4466a0652710d31"],
+        "room": "66bb697bd4466a0652710d25",
+        "user": "66bb691dd4466a0652710d1d"
+    }
+
+    ```
+
 -   Get all bookings - (admin) (GET): https://room-booking-node.vercel.app/api/bookings
 -   Get bookings by user - (user) (GET): https://room-booking-node.vercel.app/api/my-bookings
 -   Update bookings - (admin) (PUT): https://room-booking-node.vercel.app/api/bookings/66bb6c474b3573ad3c7e35b
+
+    -   Request body:
+
+    ```
+    {
+        "isConfirmed": "confirmed"
+    }
+
+    ```
+
 -   Delete bookings (admin) (DELETE): https://room-booking-node.vercel.app/api/bookings/66bb6c474b3573ad3c7e35b
 
 ### Bonus Implemetation
