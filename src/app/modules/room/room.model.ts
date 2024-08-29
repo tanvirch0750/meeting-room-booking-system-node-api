@@ -10,6 +10,13 @@ const roomSchema = new Schema<IRoom, IRoomModel, IRoomMethods>(
         pricePerSlot: { type: Number, required: true },
         amenities: { type: [String], required: true },
         isDeleted: { type: Boolean, default: false },
+        images: { type: [String], required: true },
+        category: {
+            type: Schema.Types.ObjectId,
+            ref: 'Category',
+            required: true,
+        },
+        isFeatured: { type: Boolean, default: false },
     },
     {
         timestamps: true,

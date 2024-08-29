@@ -31,6 +31,16 @@ const createRoomValidationSchema = z.object({
                 invalid_type_error: 'Amenities must be an array of strings',
             })
             .min(1, 'At least one amenity is required'),
+        images: z
+            .array(z.string(), {
+                required_error: 'Images are required',
+                invalid_type_error: 'Images must be an array of strings',
+            })
+            .min(1, 'At least one image is required'),
+        category: z.string({
+            required_error: 'Category is required',
+            invalid_type_error: 'Category must be a string',
+        }),
     }),
 });
 
@@ -42,6 +52,8 @@ const updateRoomalidationSchema = z.object({
         capacity: z.number().optional(),
         pricePerSlot: z.number().optional(),
         amenities: z.array(z.string()).optional(),
+        images: z.array(z.string()).optional(),
+        category: z.string().optional(),
     }),
 });
 

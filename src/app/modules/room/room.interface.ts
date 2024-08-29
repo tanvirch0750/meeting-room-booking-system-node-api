@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 export type IRoom = {
     name: string;
@@ -8,6 +8,9 @@ export type IRoom = {
     pricePerSlot: number;
     amenities: string[];
     isDeleted: boolean;
+    images: string[];
+    category: Types.ObjectId;
+    isFeatured: boolean;
 };
 
 // Define the type for custom instance methods
