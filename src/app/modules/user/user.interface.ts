@@ -11,6 +11,7 @@ export type IUser = {
     address: string;
     role: IRole;
     isDeleted: boolean;
+    image: string;
     createdAt?: string;
     updatedAt?: string;
     __v?: string;

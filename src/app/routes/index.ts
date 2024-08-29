@@ -3,6 +3,7 @@ import { authRoutes } from '../modules/auth/auth.route';
 import { bookingRoutes } from '../modules/booking/booking.route';
 import { myBookingRoutes } from '../modules/booking/my-booking.route';
 import { categoryRoutes } from '../modules/category/category.route';
+import { reviewRoutes } from '../modules/reviews/reviews.route';
 import { roomRoutes } from '../modules/room/room.route';
 import { slotRoutes } from '../modules/slot/slot.route';
 
@@ -32,6 +33,10 @@ const moduleRoutes = [
     {
         path: '/my-bookings',
         route: myBookingRoutes,
+    },
+    {
+        path: '/review',
+        route: reviewRoutes,
     },
 ];
 

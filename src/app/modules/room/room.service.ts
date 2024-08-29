@@ -10,7 +10,7 @@ const createRoomIntoDB = async (payload: IRoom) => {
 };
 
 const getAllRoomsFromDB = async (query: Record<string, unknown>) => {
-    const roomQuery = new QueryBuilder(Room.find(), query)
+    const roomQuery = new QueryBuilder(Room.find().populate('category'), query)
         .search(RoomSearchableFields)
         .filter()
         .sort()
@@ -22,7 +22,7 @@ const getAllRoomsFromDB = async (query: Record<string, unknown>) => {
 };
 
 const getSingleRoomFromDB = async (id: string) => {
-    const result = await Room.findById(id);
+    const result = await Room.findById(id).populate('category');
 
     if (!result) throw new AppError(404, `No room found with (${id}) this id`);
 
