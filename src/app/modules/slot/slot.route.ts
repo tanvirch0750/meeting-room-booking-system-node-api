@@ -16,7 +16,18 @@ router.post(
     slotController.createSlot,
 );
 
+router.get('/', auth(USER_ROLE.admin), slotController.getAllSlots);
+
 router.get('/availability', slotController.getAvailableSlots);
+
+router.put(
+    '/:id',
+    auth(USER_ROLE.admin),
+    validateRequest(slotValidations.createSlotValidationSchema),
+    slotController.updateSlot,
+);
+
+router.delete('/:id', auth(USER_ROLE.admin), slotController.deleteSlot);
 
 // Export the router as ProductRoutes
 export const slotRoutes = router;

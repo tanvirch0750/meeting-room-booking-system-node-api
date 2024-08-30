@@ -3,6 +3,7 @@ import { authRoutes } from '../modules/auth/auth.route';
 import { bookingRoutes } from '../modules/booking/booking.route';
 import { myBookingRoutes } from '../modules/booking/my-booking.route';
 import { categoryRoutes } from '../modules/category/category.route';
+import { cqRoutes } from '../modules/customer-query/cq.route';
 import { reviewRoutes } from '../modules/reviews/reviews.route';
 import { roomRoutes } from '../modules/room/room.route';
 import { slotRoutes } from '../modules/slot/slot.route';
@@ -40,7 +41,7 @@ const moduleRoutes = [
     },
     {
         path: '/customer-query',
-        route: reviewRoutes,
+        route: cqRoutes,
     },
 ];
 
