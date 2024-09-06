@@ -85,6 +85,7 @@ const createSlotIntoDB = async (payload: ISlot) => {
                 endTime: slotEnd,
                 isBooked: false,
                 isDeleted: false,
+                roomName: roomExists?.name,
             });
 
             await newSlot.save({ session });
@@ -113,8 +114,6 @@ const getAvailableSlotsFromDB = async (query: Record<string, unknown>) => {
     // Get current date, reset time to start of the day
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
-
-    // TODO: remove all the slots that is previous date
 
     // Start building the query
     let slotQuery = Slot.find({ isBooked: false, isDeleted: false });
@@ -175,7 +174,17 @@ const getAllSlotsFromDB = async (query: Record<string, unknown>) => {
     return result;
 };
 
+const getSingleSlotFromDB = async (id: string) => {
+    const result = await Slot.findById(id).populate('room');
+
+    if (!result) throw new AppError(404, `No slot found with (${id}) this id`);
+
+    return result;
+};
+
 const updateSlotInDB = async (slotId: string, payload: Partial<ISlot>) => {
+    console.log('slot updating');
+
     const { room, date, startTime, endTime } = payload;
 
     // Check if the date is in the past
@@ -209,63 +218,43 @@ const updateSlotInDB = async (slotId: string, payload: Partial<ISlot>) => {
         }
     }
 
-    const session = await mongoose.startSession();
-
-    try {
-        session.startTransaction();
-
-        // Check if Slot Exists
-        const existingSlot = await Slot.findById(slotId).session(session);
-        if (!existingSlot) {
-            throw new AppError(404, `Slot Not Found`);
-        }
-
-        // Check if Room Exists (if room is being updated)
-        if (room) {
-            const roomExists = await Room.findById(room).session(session);
-            if (!roomExists) {
-                throw new AppError(404, `Room Not Found`);
-            }
-        }
-
-        // Check for Overlapping Slots
-        if (startTime && endTime && room && date) {
-            const overlappingSlots = await Slot.find({
-                room,
-                date,
-                _id: { $ne: slotId }, // Exclude current slot from the check
-                $or: [
-                    {
-                        $and: [
-                            { startTime: { $lt: endTime } },
-                            { endTime: { $gt: startTime } },
-                        ],
-                    },
-                ],
-            }).session(session);
-
-            if (overlappingSlots.length > 0) {
-                throw new AppError(400, `Overlapping slots detected`);
-            }
-        }
-
-        // Update Slot Details
-        if (room) existingSlot.room = room;
-        if (date) existingSlot.date = date;
-        if (startTime) existingSlot.startTime = startTime;
-        if (endTime) existingSlot.endTime = endTime;
-
-        await existingSlot.save({ session });
-
-        await session.commitTransaction();
-        session.endSession();
-
-        return existingSlot;
-    } catch (error: any) {
-        await session.abortTransaction();
-        await session.endSession();
-        throw error;
+    // Check if Slot Exists
+    const existingSlot = await Slot.findById(slotId);
+    if (!existingSlot) {
+        throw new AppError(404, `Slot Not Found`);
     }
+
+    // Check if Room Exists (if room is being updated)
+    if (room) {
+        const roomExists = await Room.findById(room);
+        if (!roomExists) {
+            throw new AppError(404, `Room Not Found`);
+        }
+    }
+
+    // Check for Existing Slots in Database
+    const existingSlots = await Slot.find({
+        room,
+        date,
+        $or: [
+            {
+                $and: [
+                    { startTime: { $lt: endTime } },
+                    { endTime: { $gt: startTime } },
+                ],
+            },
+        ],
+    });
+
+    if (existingSlots.length > 0) {
+        throw new AppError(404, `Overlapping slots detected`);
+    }
+
+    const result = await Slot.findOneAndUpdate({ _id: slotId }, payload, {
+        new: true,
+    });
+
+    return result;
 };
 
 const deleteSlotFromDB = async (id: string) => {
@@ -275,7 +264,11 @@ const deleteSlotFromDB = async (id: string) => {
         throw new AppError(404, `Slot not found with ID: ${id}`);
     }
 
-    const result = await Slot.updateOne({ _id: id }, { isDeleted: true });
+    if (slotExists?.isBooked) {
+        throw new AppError(404, `This slot is already booked`);
+    }
+
+    const result = await Slot.findByIdAndDelete(id);
 
     return result;
 };
@@ -286,4 +279,5 @@ export const slotServices = {
     updateSlotInDB,
     getAllSlotsFromDB,
     deleteSlotFromDB,
+    getSingleSlotFromDB,
 };

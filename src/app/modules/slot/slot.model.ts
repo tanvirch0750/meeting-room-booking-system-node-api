@@ -9,6 +9,7 @@ const slotSchema = new Schema<ISlot, ISlotModel, ISlotMethods>(
         endTime: { type: String, required: true },
         isBooked: { type: Boolean, default: false },
         isDeleted: { type: Boolean, default: false },
+        roomName: { type: String },
     },
     {
         timestamps: true,

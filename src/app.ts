@@ -9,7 +9,7 @@ const app: Application = express();
 
 // parsers
 app.use(express.json());
-app.use(cors({ origin: ['http://localhost:3000'] })); // frontend origin
+app.use(cors({ origin: ['http://localhost:5173'] })); // frontend origin
 app.use(cookieParser());
 
 // application routes

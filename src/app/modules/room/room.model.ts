@@ -17,6 +17,7 @@ const roomSchema = new Schema<IRoom, IRoomModel, IRoomMethods>(
             required: true,
         },
         isFeatured: { type: Boolean, default: false },
+        description: { type: String, required: true },
     },
     {
         timestamps: true,

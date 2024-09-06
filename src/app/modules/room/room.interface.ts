@@ -11,6 +11,7 @@ export type IRoom = {
     images: string[];
     category: Types.ObjectId;
     isFeatured: boolean;
+    description: string;
 };
 
 // Define the type for custom instance methods

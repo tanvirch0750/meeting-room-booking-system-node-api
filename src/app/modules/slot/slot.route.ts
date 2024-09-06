@@ -20,6 +20,8 @@ router.get('/', auth(USER_ROLE.admin), slotController.getAllSlots);
 
 router.get('/availability', slotController.getAvailableSlots);
 
+router.get('/:id', slotController.getSingleSlot);
+
 router.put(
     '/:id',
     auth(USER_ROLE.admin),

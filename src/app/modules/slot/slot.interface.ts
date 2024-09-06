@@ -7,6 +7,7 @@ export type ISlot = {
     endTime: string;
     isBooked: boolean;
     isDeleted: boolean;
+    roomName?: string;
 };
 
 // Define the type for custom instance methods

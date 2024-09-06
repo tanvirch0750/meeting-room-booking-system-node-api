@@ -41,6 +41,10 @@ const createRoomValidationSchema = z.object({
             required_error: 'Category is required',
             invalid_type_error: 'Category must be a string',
         }),
+        description: z.string({
+            required_error: 'Description is required',
+            invalid_type_error: 'Description must be a string',
+        }),
     }),
 });
 
@@ -54,6 +58,7 @@ const updateRoomalidationSchema = z.object({
         amenities: z.array(z.string()).optional(),
         images: z.array(z.string()).optional(),
         category: z.string().optional(),
+        isFeatured: z.boolean().optional(),
     }),
 });
 

@@ -78,10 +78,23 @@ const deleteSlot = catchAsync(async (req, res) => {
     });
 });
 
+const getSingleSlot = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const result = await slotServices.getSingleSlotFromDB(id);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'slot is retrieved succesfully',
+        data: result,
+    });
+});
+
 export const slotController = {
     createSlot,
     getAvailableSlots,
     updateSlot,
     getAllSlots,
     deleteSlot,
+    getSingleSlot,
 };
