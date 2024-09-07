@@ -111,15 +111,17 @@ const getAvailableSlotsFromDB = async (query: Record<string, unknown>) => {
         delete query.roomId;
     }
 
-    // Get current date, reset time to start of the day
+    // Get current date, reset time to start of the day, and format it as "YYYY-MM-DD"
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
+    const formattedCurrentDate = currentDate.toISOString().split('T')[0]; // "YYYY-MM-DD"
 
     // Start building the query
     let slotQuery = Slot.find({ isBooked: false, isDeleted: false });
 
-    // Remove slots that are for previous dates
-    slotQuery = slotQuery.where('date').gte(currentDate as unknown as number);
+    // Remove slots that are for previous dates by comparing with the formatted date string
+    // @ts-ignore
+    slotQuery = slotQuery.where('date').gte(formattedCurrentDate);
 
     // Filter by date if provided
     if (date) {
@@ -141,6 +143,45 @@ const getAvailableSlotsFromDB = async (query: Record<string, unknown>) => {
     const result = await roomQuery.modelQuery;
     return result;
 };
+
+// const getAvailableSlotsFromDB = async (query: Record<string, unknown>) => {
+//     const { date, roomId } = query;
+
+//     if (roomId) {
+//         query.room = query.roomId;
+//         delete query.roomId;
+//     }
+
+//     // Get current date, reset time to start of the day
+//     const currentDate = new Date();
+//     currentDate.setHours(0, 0, 0, 0);
+
+//     // Start building the query
+//     let slotQuery = Slot.find({ isBooked: false, isDeleted: false });
+
+//     // Remove slots that are for previous dates
+//     slotQuery = slotQuery.where('date').gte(currentDate as unknown as number);
+
+//     // Filter by date if provided
+//     if (date) {
+//         slotQuery = slotQuery.where('date').equals(date);
+//     }
+
+//     // Filter by roomId if provided
+//     if (roomId) {
+//         slotQuery = slotQuery.where('room').equals(roomId);
+//     }
+
+//     const roomQuery = new QueryBuilder(slotQuery.populate('room'), query)
+//         .search(SlotSearchableFields)
+//         .filter()
+//         .sort()
+//         .paginate()
+//         .fields();
+
+//     const result = await roomQuery.modelQuery;
+//     return result;
+// };
 
 const getAllSlotsFromDB = async (query: Record<string, unknown>) => {
     const { date, roomId } = query;

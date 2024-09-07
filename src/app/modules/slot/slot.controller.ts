@@ -27,6 +27,8 @@ const updateSlot = catchAsync(async (req, res) => {
 });
 
 const getAvailableSlots = catchAsync(async (req, res) => {
+    console.log('available slots');
+
     const result = await slotServices.getAvailableSlotsFromDB(req.query);
 
     if (result.length <= 0) {

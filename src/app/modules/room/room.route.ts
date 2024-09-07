@@ -20,7 +20,11 @@ router.post(
 router.get('/', roomControllers.getAllRooms);
 
 // Define the route for retrieving a single room by its ID
-router.get('/:id', roomControllers.getSingleRoom);
+router.get(
+    '/:id',
+    auth(USER_ROLE.user, USER_ROLE.admin),
+    roomControllers.getSingleRoom,
+);
 
 // Define the route for deleting a room by its ID
 router.delete('/:id', auth(USER_ROLE.admin), roomControllers.deleteRoom);

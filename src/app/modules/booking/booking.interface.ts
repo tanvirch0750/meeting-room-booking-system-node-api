@@ -8,6 +8,7 @@ export type IBooking = {
     totalAmount?: number;
     isConfirmed?: 'confirmed' | 'unconfirmed' | 'canceled';
     isDeleted: boolean;
+    trxId: string;
 };
 
 // Define the type for custom instance methods

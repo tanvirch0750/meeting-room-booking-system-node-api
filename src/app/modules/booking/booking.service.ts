@@ -1,12 +1,14 @@
 import mongoose from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/appError';
+import { initiatePayment } from '../payment/payment.utils';
 import { Room } from '../room/room.model';
 import { Slot } from '../slot/slot.model';
 import { User } from '../user/user.model';
 import { BookingSearchableFields } from './booking.constant';
 import { IBooking } from './booking.interface';
 import { Booking } from './booking.model';
+import { generateTransactionId } from './booking.utils';
 
 export const createBooking = async (payload: IBooking) => {
     const { date, slots, room, user } = payload;
@@ -44,15 +46,19 @@ export const createBooking = async (payload: IBooking) => {
             );
         }
 
+        const trxId = generateTransactionId();
+        const totalAmount = existingSlots.length * roomExists.pricePerSlot;
+
         // Create the booking
         const newBooking = new Booking({
             date,
             slots,
             room,
             user,
-            totalAmount: existingSlots.length * roomExists.pricePerSlot,
+            totalAmount,
             isConfirmed: 'unconfirmed',
             isDeleted: false,
+            trxId,
         });
 
         // Mark the slots as booked
@@ -77,7 +83,22 @@ export const createBooking = async (payload: IBooking) => {
                 'name roomNo floorNo capacity pricePerSlot amenities isDeleted',
             );
 
-        return populatedBooking;
+        const paymentData = {
+            trxId,
+            totalPrice: totalAmount,
+            custormerName: userExists?.name,
+            customerEmail: userExists?.email,
+            customerPhone: userExists.phone,
+            customerAddress: userExists.address,
+        };
+
+        // initiate payment
+        const paymentSession = await initiatePayment(paymentData);
+
+        return {
+            bookingData: populatedBooking,
+            paymentSession,
+        };
     } catch (error) {
         await session.abortTransaction();
         session.endSession();
