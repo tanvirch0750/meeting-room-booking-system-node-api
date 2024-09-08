@@ -4,7 +4,6 @@ import sendResponse from '../../utils/sendResponse';
 import { roomServices } from './room.service';
 
 const createRoom = catchAsync(async (req, res) => {
-    console.log(req.body);
     const result = await roomServices.createRoomIntoDB(req.body);
 
     sendResponse(res, {

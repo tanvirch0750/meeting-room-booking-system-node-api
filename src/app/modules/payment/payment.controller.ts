@@ -11,6 +11,17 @@ const confirmationController = async (req: Request, res: Response) => {
     res.send(result);
 };
 
+const failedController = async (req: Request, res: Response) => {
+    const { transactionId, status } = req.query;
+
+    const result = await paymentServices.failedService(
+        transactionId as string,
+        status as string,
+    );
+    res.send(result);
+};
+
 export const paymentControler = {
     confirmationController,
+    failedController,
 };

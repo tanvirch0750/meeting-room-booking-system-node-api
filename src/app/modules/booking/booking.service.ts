@@ -172,10 +172,33 @@ const deleteBookingFromDB = async (id: string) => {
     return result;
 };
 
+const cancelBookingFromDB = async (payload: any) => {
+    await Booking.findOneAndUpdate(
+        { trxId: payload.transactionId },
+        {
+            isConfirmed: 'cancelled',
+        },
+    );
+
+    const booking = await Booking.findOne({ trxId: payload.transactionId });
+
+    let slots;
+
+    if (booking) {
+        slots = booking.slots;
+    }
+
+    // Mark the slots as booked
+    await Slot.updateMany({ _id: { $in: slots } }, { isBooked: false });
+
+    return { message: 'Booking canceled' };
+};
+
 export const bookingServices = {
     createBooking,
     getAllBookingsFromDB,
     getBookingByUserFromDB,
     updateBookingIntoDB,
     deleteBookingFromDB,
+    cancelBookingFromDB,
 };

@@ -121,7 +121,7 @@ const getAvailableSlotsFromDB = async (query: Record<string, unknown>) => {
 
     // Remove slots that are for previous dates by comparing with the formatted date string
     // @ts-ignore
-    slotQuery = slotQuery.where('date').gte(formattedCurrentDate);
+    // slotQuery = slotQuery.where('date').gte(formattedCurrentDate);
 
     // Filter by date if provided
     if (date) {
@@ -224,8 +224,6 @@ const getSingleSlotFromDB = async (id: string) => {
 };
 
 const updateSlotInDB = async (slotId: string, payload: Partial<ISlot>) => {
-    console.log('slot updating');
-
     const { room, date, startTime, endTime } = payload;
 
     // Check if the date is in the past

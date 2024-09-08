@@ -5,7 +5,6 @@ import sendResponse from '../../utils/sendResponse';
 import { AuthServices } from './auth.service';
 
 const signupUser = catchAsync(async (req, res) => {
-    console.log('sign up user');
     const result = await AuthServices.signupUser(req.body);
 
     const {

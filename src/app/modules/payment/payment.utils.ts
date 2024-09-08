@@ -10,8 +10,8 @@ export const initiatePayment = async (paymentData: any) => {
             signature_key: config.signature_key,
             tran_id: paymentData.trxId,
             success_url: `http://localhost:5000/api/payment/confirmation?transactionId=${paymentData.trxId}&status=success`,
-            fail_url: `http://localhost:5000/api/payment/confirmation?status=failed`,
-            cancel_url: 'http://localhost:5173/',
+            fail_url: `http://localhost:5000/api/payment/failed?transactionId=${paymentData.trxId}&status=failed`,
+            cancel_url: `http://localhost:5173/booking/cancel/${paymentData.trxId}`,
             amount: paymentData.totalPrice,
             currency: 'BDT',
             desc: 'Merchant Registration Payment',
@@ -27,7 +27,6 @@ export const initiatePayment = async (paymentData: any) => {
             type: 'json',
         });
 
-        console.log(response);
         return response.data;
     } catch (err) {
         throw new Error('Payment initiation failed!');

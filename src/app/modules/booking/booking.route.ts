@@ -16,6 +16,12 @@ router.post(
     bookingController.createBooking,
 );
 
+router.post(
+    '/cancel-booking',
+    auth(USER_ROLE.user, USER_ROLE.admin),
+    bookingController.cancelBooking,
+);
+
 // Define the route for retrieving all bookings
 router.get('/', auth(USER_ROLE.admin), bookingController.getAllBookings);
 

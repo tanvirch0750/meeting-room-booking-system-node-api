@@ -51,7 +51,6 @@ const updateUser = catchAsync(async (req, res) => {
 });
 
 const getProfileData = catchAsync(async (req, res) => {
-    console.log('ddddddddddddddddddddddd');
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {

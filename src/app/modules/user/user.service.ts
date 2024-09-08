@@ -30,7 +30,6 @@ const updateUserIntoDB = async (id: string, payload: Partial<IUser>) => {
 };
 
 const getProfileData = async (verifiedUser: JwtPayload) => {
-    console.log(verifiedUser);
     const result = await User.findOne({ email: verifiedUser.userEmail });
 
     if (!result) {
