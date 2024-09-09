@@ -16,6 +16,12 @@ router.post(
     slotController.createSlot,
 );
 
+router.post(
+    '/create-monthly-slot',
+    auth(USER_ROLE.admin),
+    slotController.createMonthlySlot,
+);
+
 router.get('/', auth(USER_ROLE.admin), slotController.getAllSlots);
 
 router.get('/availability', slotController.getAvailableSlots);

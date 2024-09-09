@@ -14,6 +14,17 @@ const createSlot = catchAsync(async (req, res) => {
     });
 });
 
+const createMonthlySlot = catchAsync(async (req, res) => {
+    const result = await slotServices.createMonthlySlots(req.body);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Monthly Slot is created succesfully',
+        data: result,
+    });
+});
+
 const updateSlot = catchAsync(async (req, res) => {
     const { id } = req.params;
     const result = await slotServices.updateSlotInDB(id, req.body);
@@ -97,4 +108,5 @@ export const slotController = {
     getAllSlots,
     deleteSlot,
     getSingleSlot,
+    createMonthlySlot,
 };

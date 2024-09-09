@@ -312,6 +312,121 @@ const deleteSlotFromDB = async (id: string) => {
     return result;
 };
 
+const createMonthlySlots = async (payload: any) => {
+    const {
+        room,
+        startTime = '01:00',
+        endTime = '23:00',
+        month,
+        year,
+    } = payload;
+
+    // Validate month and year in payload
+    if (!month || !year) {
+        throw new AppError(400, `Month and year must be provided`);
+    }
+
+    // Convert Times to Minutes
+    const startMinutes = timeToMinutes(startTime);
+    const endMinutes = timeToMinutes(endTime);
+
+    if (startMinutes >= endMinutes) {
+        throw new AppError(400, `End time must be after start time`);
+    }
+
+    // Slot Duration
+    const slotDuration = 60; // minutes
+
+    // Calculate Total Duration and Number of Slots per day
+    const totalDuration = endMinutes - startMinutes;
+    const numberOfSlots = Math.floor(totalDuration / slotDuration);
+
+    if (numberOfSlots <= 0) {
+        throw new AppError(
+            400,
+            `Duration is too short to create slots. Duration must be at least 1 hour`,
+        );
+    }
+
+    // Get total days in the given month and year
+    const daysInMonth = new Date(year, month, 0).getDate();
+
+    const session = await mongoose.startSession();
+
+    try {
+        session.startTransaction();
+
+        // Check if Room Exists
+        const roomExists = await Room.findById(room).session(session);
+        if (!roomExists) {
+            throw new AppError(404, `Room Not Found`);
+        }
+
+        const allSlots = [];
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(year, month - 1, day)
+                .toISOString()
+                .split('T')[0]; // Format date as YYYY-MM-DD
+
+            // Check for Existing Slots on that day
+            const existingSlots = await Slot.find({
+                room,
+                date,
+                $or: [
+                    {
+                        $and: [
+                            { startTime: { $lt: endTime } },
+                            { endTime: { $gt: startTime } },
+                        ],
+                    },
+                ],
+            }).session(session);
+
+            if (existingSlots.length > 0) {
+                throw new AppError(
+                    404,
+                    `Overlapping slots detected on ${date}`,
+                );
+            }
+
+            const slots = [];
+            for (let i = 0; i < numberOfSlots; i++) {
+                const slotStart = minutesToTime(
+                    startMinutes + i * slotDuration,
+                );
+                const slotEnd = minutesToTime(
+                    startMinutes + (i + 1) * slotDuration,
+                );
+
+                const newSlot = new Slot({
+                    room,
+                    date,
+                    startTime: slotStart,
+                    endTime: slotEnd,
+                    isBooked: false,
+                    isDeleted: false,
+                    roomName: roomExists?.name,
+                });
+
+                await newSlot.save({ session });
+                slots.push(newSlot);
+            }
+
+            allSlots.push(...slots);
+        }
+
+        await session.commitTransaction();
+        session.endSession();
+
+        return allSlots;
+    } catch (error: any) {
+        await session.abortTransaction();
+        await session.endSession();
+        throw error;
+    }
+};
+
 export const slotServices = {
     createSlotIntoDB,
     getAvailableSlotsFromDB,
@@ -319,4 +434,5 @@ export const slotServices = {
     getAllSlotsFromDB,
     deleteSlotFromDB,
     getSingleSlotFromDB,
+    createMonthlySlots,
 };
