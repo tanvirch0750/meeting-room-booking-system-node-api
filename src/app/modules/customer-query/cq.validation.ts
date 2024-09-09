@@ -3,9 +3,13 @@ import { z } from 'zod';
 // User schema
 const createCqValidationSchema = z.object({
     body: z.object({
-        name: z.string({
-            required_error: 'Name is required',
-            invalid_type_error: 'Name must be a string',
+        firstName: z.string({
+            required_error: 'First Name is required',
+            invalid_type_error: 'First Name must be a string',
+        }),
+        lastName: z.string({
+            required_error: 'Last Name is required',
+            invalid_type_error: 'Last Name must be a string',
         }),
         email: z.string({
             required_error: 'Email is required',
@@ -15,9 +19,9 @@ const createCqValidationSchema = z.object({
             required_error: 'Subject is required',
             invalid_type_error: 'Subject must be a string',
         }),
-        query: z.string({
-            required_error: 'query is required',
-            invalid_type_error: 'Query must be a string',
+        message: z.string({
+            required_error: 'Message is required',
+            invalid_type_error: 'Message must be a string',
         }),
     }),
 });

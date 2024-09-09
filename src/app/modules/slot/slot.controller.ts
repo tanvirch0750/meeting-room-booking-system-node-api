@@ -15,6 +15,7 @@ const createSlot = catchAsync(async (req, res) => {
 });
 
 const createMonthlySlot = catchAsync(async (req, res) => {
+    console.log('slot body', req.body);
     const result = await slotServices.createMonthlySlots(req.body);
 
     sendResponse(res, {

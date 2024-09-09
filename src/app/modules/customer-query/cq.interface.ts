@@ -1,10 +1,11 @@
 import { Model } from 'mongoose';
 
 export type ICq = {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     subject: string;
-    query: string;
+    message: string;
     isAnswered?: boolean;
     isDeleted: boolean;
 };
