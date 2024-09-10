@@ -5,7 +5,7 @@ import { userControllers } from './user.controller';
 
 const router = express.Router();
 
-router.get('/', userControllers.getAllUsers);
+router.get('/', auth(USER_ROLE.admin), userControllers.getAllUsers);
 
 router.get(
     '/profile',

@@ -4,6 +4,7 @@ import { bookingRoutes } from '../modules/booking/booking.route';
 import { myBookingRoutes } from '../modules/booking/my-booking.route';
 import { categoryRoutes } from '../modules/category/category.route';
 import { cqRoutes } from '../modules/customer-query/cq.route';
+import { dashboardRoutes } from '../modules/dashboard/dashboard.route';
 import { paymentRoutes } from '../modules/payment/payment.route';
 import { reviewRoutes } from '../modules/reviews/reviews.route';
 import { roomRoutes } from '../modules/room/room.route';
@@ -52,6 +53,10 @@ const moduleRoutes = [
     {
         path: '/payment',
         route: paymentRoutes,
+    },
+    {
+        path: '/dashboard',
+        route: dashboardRoutes,
     },
 ];
 
