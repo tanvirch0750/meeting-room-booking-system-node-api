@@ -9,8 +9,11 @@ const app: Application = express();
 
 // parsers
 app.use(express.json());
-app.use(cors({ origin: ['https://meet-easee.netlify.app'] })); // frontend origin
+app.use(cors({ origin: ['http://localhost:5173'] })); // frontend origin
 app.use(cookieParser());
+
+// http://localhost:5173/
+// https://meet-easee.netlify.app
 
 // application routes
 app.use('/api', router);

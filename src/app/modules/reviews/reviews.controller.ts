@@ -46,6 +46,30 @@ const getSingleReview = catchAsync(async (req, res) => {
     });
 });
 
+const getReviewStatsBySingleRoom = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const result = await reviewServices.getRoomReviewStatsFromDB(id);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Review status is retrieved succesfully',
+        data: result,
+    });
+});
+
+const getReviewsByRoomId = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const result = await reviewServices.getReviewsByRoomId(id);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Review status is retrieved succesfully',
+        data: result,
+    });
+});
+
 const updateReview = catchAsync(async (req, res) => {
     const { id } = req.params;
     const result = await reviewServices.updateReviewIntoDB(id, req.body);
@@ -76,4 +100,6 @@ export const reviewControllers = {
     getSingleReview,
     updateReview,
     deleteReview,
+    getReviewStatsBySingleRoom,
+    getReviewsByRoomId,
 };

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/appError';
@@ -194,6 +195,24 @@ const cancelBookingFromDB = async (payload: any) => {
     return { message: 'Booking canceled' };
 };
 
+const markReviewAddedByBookingById = async (
+    id: string,
+    payload: Partial<IBooking>,
+) => {
+    // Check if the booking exists
+    const bookingExists = await Booking.findById(id);
+    if (!bookingExists) {
+        throw new AppError(404, `Booking not found with ID: ${id}`);
+    }
+
+    const result = await Booking.updateOne(
+        { _id: id },
+        { isReviewAdded: true, reviewId: payload?.reviewId },
+    );
+
+    return result;
+};
+
 export const bookingServices = {
     createBooking,
     getAllBookingsFromDB,
@@ -201,4 +220,5 @@ export const bookingServices = {
     updateBookingIntoDB,
     deleteBookingFromDB,
     cancelBookingFromDB,
+    markReviewAddedByBookingById,
 };

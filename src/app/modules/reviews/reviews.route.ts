@@ -16,13 +16,17 @@ router.post(
 
 router.get('/', reviewControllers.getAllReviews);
 
+router.get('/room/:id', reviewControllers.getReviewsByRoomId);
+
+router.get('/review-stat/:id', reviewControllers.getReviewStatsBySingleRoom);
+
 router.get('/:id', reviewControllers.getSingleReview);
 
 router.delete('/:id', auth(USER_ROLE.admin), reviewControllers.deleteReview);
 
 router.put(
     '/:id',
-    auth(USER_ROLE.admin),
+    auth(USER_ROLE.admin, USER_ROLE.user),
     validateRequest(reviewValidations.updateReviewValidationSchema),
     reviewControllers.updateReview,
 );

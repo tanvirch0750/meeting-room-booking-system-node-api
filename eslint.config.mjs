@@ -15,6 +15,8 @@ export default tseslint.config(
             'no-console': 'warn',
             'prefer-const': 'error',
             'no-unused-expressions': 'error',
+            '@typescript-eslint/ban-ts-comment': 'off',
+            '@typescript-eslint/no-unused-vars': 'off',
         },
     },
     {

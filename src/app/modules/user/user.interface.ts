@@ -3,7 +3,7 @@ import { Model } from 'mongoose';
 export type IRole = 'admin' | 'user';
 
 export type IUser = {
-    [x: string]: any;
+    [x: string]: unknown;
     name: string;
     email: string;
     password: string;
@@ -14,6 +14,8 @@ export type IUser = {
     image: string;
     createdAt?: string;
     updatedAt?: string;
+    bio?: string;
+    socialMedia?: Record<string, string>;
     __v?: string;
 };
 

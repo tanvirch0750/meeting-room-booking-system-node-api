@@ -80,6 +80,22 @@ const deleteBooking = catchAsync(async (req, res) => {
     });
 });
 
+const reviewAddedtoBooking = catchAsync(async (req, res) => {
+    const { id } = req.params;
+
+    const result = await bookingServices.markReviewAddedByBookingById(
+        id,
+        req.body,
+    );
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Review added succesfully',
+        data: result,
+    });
+});
+
 const cancelBooking = catchAsync(async (req, res) => {
     const result = await bookingServices.cancelBookingFromDB(req.body);
 
@@ -98,4 +114,5 @@ export const bookingController = {
     updateBooking,
     deleteBooking,
     cancelBooking,
+    reviewAddedtoBooking,
 };

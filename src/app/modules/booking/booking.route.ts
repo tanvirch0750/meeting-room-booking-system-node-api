@@ -21,6 +21,11 @@ router.post(
     auth(USER_ROLE.user, USER_ROLE.admin),
     bookingController.cancelBooking,
 );
+router.put(
+    '/review-added/:id',
+    auth(USER_ROLE.user),
+    bookingController.reviewAddedtoBooking,
+);
 
 // Define the route for retrieving all bookings
 router.get('/', auth(USER_ROLE.admin), bookingController.getAllBookings);

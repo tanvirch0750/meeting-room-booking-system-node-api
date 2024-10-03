@@ -10,6 +10,8 @@ const bookingSchema = new Schema<IBooking, IBookingModel, IBookingMethods>(
         totalAmount: { type: Number, required: true },
         isConfirmed: { type: String, default: 'unconfirmed' },
         isDeleted: { type: Boolean, default: false },
+        isReviewAdded: { type: Boolean, default: false },
+        reviewId: { type: String },
         trxId: { type: String, required: true },
     },
     {

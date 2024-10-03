@@ -38,6 +38,15 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
             default: 'user',
         },
 
+        bio: {
+            required: false,
+            type: String,
+        },
+        socialMedia: {
+            required: false,
+            type: Object,
+        },
+
         isDeleted: {
             type: Boolean,
             default: false,

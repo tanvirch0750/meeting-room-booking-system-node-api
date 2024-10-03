@@ -20,7 +20,7 @@ const getUserById = async (id: string) => {
 const updateUserIntoDB = async (id: string, payload: Partial<IUser>) => {
     const userExists = await User.findById(id);
     if (!userExists) {
-        throw new AppError(404, `Review not found with ID: ${id}`);
+        throw new AppError(404, `User not found with ID: ${id}`);
     }
 
     const result = await User.findOneAndUpdate({ _id: id }, payload, {

@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/appError';
 import { ReviewSearchableFields } from './reviews.constant';
@@ -58,10 +59,51 @@ const deleteReviewFromDB = async (id: string) => {
     return result;
 };
 
+const getRoomReviewStatsFromDB = async (roomId: string) => {
+    const objectIdRoom =
+        typeof roomId === 'string' ? new Types.ObjectId(roomId) : roomId;
+
+    const roomStats = await Review.aggregate([
+        {
+            $match: {
+                room: objectIdRoom,
+                isDeleted: false,
+            },
+        },
+        {
+            $group: {
+                _id: '$room',
+                totalReviews: { $sum: 1 },
+                averageRating: { $avg: '$rating' },
+            },
+        },
+    ]);
+
+    if (roomStats.length === 0) {
+        throw new AppError(404, `No reviews found for room with ID: ${roomId}`);
+    }
+
+    return roomStats[0];
+};
+
+const getReviewsByRoomId = async (roomId: string) => {
+    const reviews = await Review.find({ room: roomId, isDeleted: false })
+        .populate('user')
+        .populate('room');
+
+    if (reviews.length === 0) {
+        throw new AppError(404, `No reviews found for room with ID: ${roomId}`);
+    }
+
+    return reviews;
+};
+
 export const reviewServices = {
     createReviewIntoDB,
     getAllReviewsFromDB,
     getSingleReviewFromDB,
     updateReviewIntoDB,
     deleteReviewFromDB,
+    getRoomReviewStatsFromDB,
+    getReviewsByRoomId,
 };

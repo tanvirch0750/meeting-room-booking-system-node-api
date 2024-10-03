@@ -9,6 +9,8 @@ export type IBooking = {
     isConfirmed?: 'confirmed' | 'unconfirmed' | 'cancelled';
     isDeleted: boolean;
     trxId: string;
+    reviewId?: string;
+    isReviewAdded?: boolean;
 };
 
 // Define the type for custom instance methods

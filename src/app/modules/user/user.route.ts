@@ -18,8 +18,7 @@ router.get('/:id', userControllers.getSingleUser);
 
 router.put(
     '/:id',
-    auth(USER_ROLE.admin),
-    auth(USER_ROLE.user),
+    auth(USER_ROLE.admin, USER_ROLE.user),
 
     userControllers.updateUser,
 );
