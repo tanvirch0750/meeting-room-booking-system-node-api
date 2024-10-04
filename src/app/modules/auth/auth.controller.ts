@@ -36,6 +36,7 @@ const loginUser = catchAsync(async (req, res) => {
         updatedAt,
         __v,
         ...userWithoutPassword
+        // @ts-ignore
     } = user.toObject();
 
     res.cookie('refreshToken', refreshToken, {
@@ -91,4 +92,5 @@ export const AuthControllers = {
     loginUser,
     signupUser,
     refreshToken,
+    googleSignIn,
 };

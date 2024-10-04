@@ -21,7 +21,7 @@ router.post(
 router.post(
     '/google-login',
 
-    AuthControllers.loginUser,
+    AuthControllers.googleSignIn,
 );
 
 router.post(
