@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import httpStatus from 'http-status';
 import config from '../../config';
 import catchAsync from '../../utils/catchAsync';
@@ -48,6 +49,28 @@ const loginUser = catchAsync(async (req, res) => {
         message: 'User logged in succesfully!',
         token: accessToken,
         data: userWithoutPassword,
+    });
+});
+const googleSignIn = catchAsync(async (req, res) => {
+    const { idToken } = req.body;
+
+    // Use the googleSignIn service to validate the Google ID token and generate custom JWTs
+    const result = await AuthServices.googleSignIn(idToken);
+    const { refreshToken, accessToken, user } = result;
+
+    // Set the refresh token as a secure, httpOnly cookie
+    res.cookie('refreshToken', refreshToken, {
+        secure: config.NODE_ENV === 'production',
+        httpOnly: true,
+    });
+
+    // Send the response back to the client with the access token and user details
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'User signed in with Google successfully!',
+        token: accessToken,
+        data: user,
     });
 });
 

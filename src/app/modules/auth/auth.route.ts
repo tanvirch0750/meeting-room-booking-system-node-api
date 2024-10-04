@@ -19,6 +19,12 @@ router.post(
 );
 
 router.post(
+    '/google-login',
+
+    AuthControllers.loginUser,
+);
+
+router.post(
     '/refresh-token',
     // validateRequest(AuthValidation.refreshTokenValidationSchema),
     AuthControllers.refreshToken,

@@ -20,17 +20,20 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
         },
         password: {
             type: String,
-            required: true,
             select: 0,
+            required: false,
         },
         phone: {
             type: String,
-            required: true,
-            unique: true,
+            required: false,
         },
         address: {
             type: String,
-            required: true,
+            required: false,
+        },
+        company: {
+            type: String,
+            required: false,
         },
         role: {
             type: String,
@@ -59,12 +62,17 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
 
 // pre document middleware / hook: will work on create() and save() function - to hash pass
 userSchema.pre('save', async function (next) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const user = this;
 
-    user.password = await bcrypt.hash(
-        user.password,
-        Number(config.bcrypt_salt_rounds),
-    );
+    // Only hash the password if it is provided
+    if (user.isModified('password') && user.password) {
+        user.password = await bcrypt.hash(
+            // @ts-ignore
+            user.password,
+            Number(config.bcrypt_salt_rounds),
+        );
+    }
 
     next();
 });

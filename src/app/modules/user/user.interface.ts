@@ -12,6 +12,7 @@ export type IUser = {
     role: IRole;
     isDeleted: boolean;
     image: string;
+    company?: string;
     createdAt?: string;
     updatedAt?: string;
     bio?: string;

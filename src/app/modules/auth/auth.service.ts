@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+import * as admin from 'firebase-admin';
 import httpStatus from 'http-status';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../../config';
@@ -6,6 +8,12 @@ import { IUser } from '../user/user.interface';
 import { User } from '../user/user.model';
 import { ILoginUser } from './auth.interface';
 import { createToken } from './auth.utils';
+
+admin.initializeApp({
+    credential: admin.credential.cert(
+        require('../../config/keys/serviceAccountKey.json'),
+    ),
+});
 
 const signupUser = async (payload: IUser) => {
     const result = await User.create(payload);
@@ -70,7 +78,7 @@ const refreshToken = async (token: string) => {
         config.jwt_refresh_secret as string,
     ) as JwtPayload;
 
-    const { userEmail, iat } = decoded;
+    const { userEmail } = decoded;
 
     // checking if the user is exist
     const user = await User.isUserExistsByEmail(userEmail);
@@ -101,8 +109,48 @@ const refreshToken = async (token: string) => {
     };
 };
 
+const googleSignIn = async (idToken: string) => {
+    try {
+        const decodedToken = await admin.auth().verifyIdToken(idToken);
+        const { email, name, picture: image } = decodedToken;
+
+        // Check if user exists
+        let user = await User.isUserExistsByEmail(email as string);
+
+        if (!user) {
+            // Create a new user without a password
+            //  @ts-ignore
+            user = await User.create({ email, name, image });
+        }
+
+        // Generate tokens as before
+        const jwtPayload = {
+            userEmail: user.email,
+            role: user.role,
+        };
+
+        const accessToken = createToken(
+            jwtPayload,
+            config.jwt_access_secret as string,
+            config.jwt_access_expires_in as string,
+        );
+
+        const refreshToken = createToken(
+            jwtPayload,
+            config.jwt_refresh_secret as string,
+            config.jwt_refresh_expires_in as string,
+        );
+
+        return { accessToken, refreshToken, user };
+    } catch (error) {
+        console.error('Error in googleSignIn:', error);
+        throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid Google token');
+    }
+};
+
 export const AuthServices = {
     loginUser,
     signupUser,
     refreshToken,
+    googleSignIn,
 };
