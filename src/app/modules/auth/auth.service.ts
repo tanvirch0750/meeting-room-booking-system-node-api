@@ -9,10 +9,18 @@ import { User } from '../user/user.model';
 import { ILoginUser } from './auth.interface';
 import { createToken } from './auth.utils';
 
+// admin.initializeApp({
+//     credential: admin.credential.cert(
+//         require('../../config/keys/serviceAccountKey.json'),
+//     ),
+// });
+
+const serviceAccount = JSON.parse(
+    process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string,
+);
+
 admin.initializeApp({
-    credential: admin.credential.cert(
-        require('../../config/keys/serviceAccountKey.json'),
-    ),
+    credential: admin.credential.cert(serviceAccount),
 });
 
 const signupUser = async (payload: IUser) => {

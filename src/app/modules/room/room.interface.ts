@@ -12,6 +12,7 @@ export type IRoom = {
     category: Types.ObjectId;
     isFeatured: boolean;
     description: string;
+    _id?: string;
 };
 
 // Define the type for custom instance methods

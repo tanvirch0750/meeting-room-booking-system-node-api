@@ -1,5 +1,6 @@
 import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/appError';
+import { Review } from '../reviews/reviews.model';
 import { RoomSearchableFields } from './room.constant';
 import { IRoom } from './room.interface';
 import { Room } from './room.model';
@@ -10,6 +11,7 @@ const createRoomIntoDB = async (payload: IRoom) => {
 };
 
 const getAllRoomsFromDB = async (query: Record<string, unknown>) => {
+    // Step 1: Query for rooms
     const roomQuery = new QueryBuilder(Room.find().populate('category'), query)
         .search(RoomSearchableFields)
         .filter()
@@ -17,8 +19,40 @@ const getAllRoomsFromDB = async (query: Record<string, unknown>) => {
         .paginate()
         .fields();
 
-    const result = await roomQuery.modelQuery;
-    return result;
+    const rooms = await roomQuery.modelQuery;
+
+    // Step 2: Add averageRating to each room
+    const roomIds = rooms.map((room) => room._id);
+
+    // Aggregate reviews to calculate average rating for each room
+    const ratings = await Review.aggregate([
+        {
+            $match: {
+                room: { $in: roomIds }, // Match reviews for the current rooms
+                isDeleted: false, // Exclude deleted reviews
+            },
+        },
+        {
+            $group: {
+                _id: '$room',
+                averageRating: { $avg: '$rating' }, // Calculate the average rating
+                totalReviews: { $sum: 1 }, // Count the number of reviews (optional)
+            },
+        },
+    ]);
+
+    // Step 3: Map ratings back to the rooms
+    const roomsWithRating = rooms.map((room) => {
+        const rating = ratings.find((r) => r._id.equals(room._id));
+        return {
+            // @ts-ignore
+            ...room.toObject(),
+            averageRating: rating ? rating.averageRating : 0,
+            totalReviews: rating ? rating.totalReviews : 0,
+        };
+    });
+
+    return roomsWithRating;
 };
 
 const getSingleRoomFromDB = async (id: string) => {
