@@ -22,7 +22,7 @@ router.get('/', roomControllers.getAllRooms);
 // Define the route for retrieving a single room by its ID
 router.get(
     '/:id',
-    auth(USER_ROLE.user, USER_ROLE.admin),
+
     roomControllers.getSingleRoom,
 );
 
